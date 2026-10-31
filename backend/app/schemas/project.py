@@ -40,6 +40,14 @@ class ContentRegenerateRequest(BaseModel):
     section: Optional[str] = Field("all", description="Section to regenerate: 'all', 'hook', 'script'")
 
 
+class GeminiImproveRequest(BaseModel):
+    project_id: int
+    instructions: Optional[str] = Field(
+        "Make the opening hook viral and punchy, and ensure natural delivery for the AI avatar presenter.",
+        description="Instructions for Gemini review",
+    )
+
+
 class ScriptUpdateRequest(BaseModel):
     title: str
     hook: Optional[str] = None

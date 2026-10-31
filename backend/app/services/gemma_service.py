@@ -182,21 +182,21 @@ Provide 3 to 5 coherent scenes. The entire script must flow smoothly when spoken
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            "format": "json",
             "stream": False,
             "options": {
-                "temperature": 0.7,
+                "temperature": 0.5,
                 "top_p": 0.9,
-                "num_predict": 1500,
+                "num_predict": 500,
+                "num_thread": 4,
             },
         }
 
-        # 120 seconds timeout to accommodate 8GB RAM CPU/iGPU inference
-        async with httpx.AsyncClient(timeout=120.0) as client:
+        # 180 seconds timeout for CPU inference on 8GB RAM
+        async with httpx.AsyncClient(timeout=180.0) as client:
             try:
                 response = await client.post(f"{self.base_url}/api/chat", json=payload)
             except httpx.ReadTimeout:
-                raise TimeoutError("Ollama took more than 120 seconds to generate the script. Try a slightly shorter prompt.")
+                raise TimeoutError("Ollama took more than 180 seconds to generate the script. Try a slightly shorter prompt.")
             except Exception as e:
                 raise RuntimeError(f"Failed to communicate with Ollama: {str(e)}")
 
@@ -205,6 +205,8 @@ Provide 3 to 5 coherent scenes. The entire script must flow smoothly when spoken
 
         res_data = response.json()
         raw_content = res_data.get("message", {}).get("content", "").strip()
+        if not raw_content:
+            raw_content = res_data.get("message", {}).get("thinking", "").strip()
 
         # Clean JSON if wrapped in markdown code blocks
         clean_json_str = raw_content

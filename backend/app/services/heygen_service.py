@@ -163,8 +163,14 @@ class HeyGenService:
                     params={"limit": 50},
                 )
                 if res.status_code == 200:
-                    data = res.json().get("data", {})
-                    items = data.get("items", []) or data.get("looks", [])
+                    raw = res.json()
+                    data = raw.get("data") if isinstance(raw, dict) else raw
+                    if isinstance(data, list):
+                        items = data
+                    elif isinstance(data, dict):
+                        items = data.get("items", []) or data.get("looks", [])
+                    else:
+                        items = []
                     if items:
                         return items
             return CURATED_OFFICIAL_AVATARS
@@ -185,8 +191,14 @@ class HeyGenService:
                     params={"limit": 60},
                 )
                 if res.status_code == 200:
-                    data = res.json().get("data", {})
-                    items = data.get("items", []) or data.get("voices", [])
+                    raw = res.json()
+                    data = raw.get("data") if isinstance(raw, dict) else raw
+                    if isinstance(data, list):
+                        items = data
+                    elif isinstance(data, dict):
+                        items = data.get("items", []) or data.get("voices", [])
+                    else:
+                        items = []
                     if items:
                         return items
             return CURATED_OFFICIAL_VOICES

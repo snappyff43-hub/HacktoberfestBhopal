@@ -17,9 +17,11 @@ from app.schemas.project import (
     ProjectSummary,
     ScriptUpdateRequest,
     VideoJobResponse,
+    GeminiImproveRequest,
 )
 from app.services.gemma_service import gemma_service
 from app.services.heygen_service import heygen_service
+from app.services.gemini_service import gemini_service
 
 router = APIRouter(prefix="/api", tags=["creatorflow"])
 
@@ -31,7 +33,7 @@ async def health_check():
         "status": "healthy",
         "service": "CreatorFlow AI Backend",
         "version": "1.0.0",
-        "api_spec": "HeyGen V3 + Local Gemma 4",
+        "api_spec": "HeyGen V3 + Local Gemma 4 + Gemini Review",
     }
 
 
@@ -40,6 +42,12 @@ async def get_ai_status():
     """Inspect local Ollama connection, version, and Gemma 4 model readiness."""
     status_data = await gemma_service.check_status()
     return AIStatusResponse(**status_data)
+
+
+@router.get("/gemini/status")
+async def get_gemini_status():
+    """Check Gemini API connection and model readiness."""
+    return await gemini_service.verify_auth()
 
 
 @router.get("/heygen/status", response_model=HeyGenStatusResponse)
@@ -192,6 +200,72 @@ async def regenerate_content(req: ContentRegenerateRequest, db: Session = Depend
     return {
         "project_id": project.id,
         "content": content.model_dump(),
+        "version": new_version,
+    }
+
+
+@router.post("/content/improve-with-gemini")
+async def improve_content_with_gemini(req: GeminiImproveRequest, db: Session = Depends(get_db)):
+    """User consents to improve and elevate the generated script using Gemini."""
+    project = db.query(Project).filter(Project.id == req.project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    latest_script = (
+        db.query(GeneratedScript)
+        .filter(GeneratedScript.project_id == project.id)
+        .order_by(GeneratedScript.version.desc())
+        .first()
+    )
+    if not latest_script:
+        raise HTTPException(status_code=400, detail="No script found for this project.")
+
+    base_content = GeneratedContentSchema(
+        title=latest_script.title,
+        hook=latest_script.hook or "",
+        script=latest_script.script,
+        language=latest_script.language,
+        scenes=latest_script.scenes,
+        caption=latest_script.caption or "",
+        hashtags=latest_script.hashtags,
+        description=latest_script.description or "",
+        call_to_action=latest_script.call_to_action or "",
+    )
+
+    try:
+        improved = await gemini_service.improve_script(
+            base_script=base_content,
+            instructions=req.instructions,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Gemini improvement failed: {str(e)}",
+        )
+
+    new_version = (latest_script.version + 1) if latest_script else 1
+    script_record = GeneratedScript(
+        project_id=project.id,
+        title=improved.title,
+        hook=improved.hook,
+        script=improved.script,
+        language=improved.language,
+        scenes_json=json.dumps([s.model_dump() for s in improved.scenes]),
+        caption=improved.caption,
+        hashtags_json=json.dumps(improved.hashtags),
+        description=improved.description,
+        call_to_action=improved.call_to_action,
+        is_approved=False,
+        version=new_version,
+    )
+    db.add(script_record)
+    project.title = improved.title
+    db.commit()
+
+    return {
+        "project_id": project.id,
+        "original": base_content.model_dump(),
+        "improved": improved.model_dump(),
         "version": new_version,
     }
 

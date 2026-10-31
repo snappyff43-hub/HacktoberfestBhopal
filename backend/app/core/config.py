@@ -16,6 +16,13 @@ else:
 HEYGEN_API_KEY = os.environ.get("HEYGEN_API_KEY", "").strip()
 HEYGEN_BASE_URL = os.environ.get("HEYGEN_BASE_URL", "https://api.heygen.com").rstrip("/")
 
+# Gemini API Configuration
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip()
+
+# Sentry DSN Configuration
+SENTRY_DSN = os.environ.get("SENTRY_DSN", "").strip()
+
 # Ollama & Gemma 4 Configuration
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma4:e2b-it-qat").strip()
