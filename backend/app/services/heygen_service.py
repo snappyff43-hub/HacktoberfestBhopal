@@ -267,6 +267,17 @@ class HeyGenService:
                     "is_demo": False,
                     "message": "HeyGen V3 Video generation task submitted successfully.",
                 }
+            elif res.status_code == 402:
+                logger.warning("HeyGen credit exhaustion (402). Falling back to high-fidelity demo pipeline.")
+                mock_id = f"demo_vid_credit_{int(asyncio.get_event_loop().time() * 1000)}"
+                return {
+                    "video_id": mock_id,
+                    "session_id": f"demo_sess_{mock_id}",
+                    "status": "pending",
+                    "is_demo": True,
+                    "insufficient_credits": True,
+                    "message": "HeyGen account has 0 credits (HTTP 402). Switched to High-Fidelity Simulation mode for hackathon evaluation.",
+                }
             else:
                 error_body = res.text
                 logger.error("HeyGen video generation failed: %s (%s)", res.status_code, error_body)
