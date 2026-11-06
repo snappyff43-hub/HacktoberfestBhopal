@@ -36,10 +36,11 @@ class GeminiService:
                 "message": "GEMINI_API_KEY is not set in backend environment.",
             }
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models?key={self.api_key}"
+        url = "https://generativelanguage.googleapis.com/v1beta/models"
+        headers = {"x-goog-api-key": self.api_key}
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                res = await client.get(url)
+                res = await client.get(url, headers=headers)
             if res.status_code == 200:
                 data = res.json()
                 models = [m.get("name", "") for m in data.get("models", []) if "gemini" in m.get("name", "")]
@@ -129,12 +130,13 @@ REQUIRED JSON STRUCTURE:
             }
         }
 
+        headers = {"x-goog-api-key": self.api_key, "Content-Type": "application/json"}
         last_error = None
         for model in candidate_models:
-            gen_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={self.api_key}"
+            gen_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
             try:
                 async with httpx.AsyncClient(timeout=25.0) as client:
-                    res = await client.post(gen_url, json=payload)
+                    res = await client.post(gen_url, headers=headers, json=payload)
                 if res.status_code == 200:
                     res_data = res.json()
                     candidates = res_data.get("candidates", [])
@@ -153,6 +155,92 @@ REQUIRED JSON STRUCTURE:
                 continue
 
         raise RuntimeError(f"Gemini script improvement failed across candidates: {last_error}")
+
+    async def generate_platform_variants(
+        self,
+        base_script: GeneratedContentSchema,
+        topic: str,
+    ) -> Dict[str, Any]:
+        """Adapt core script into 4 platform-tailored formats using Gemini."""
+        if not self.is_configured():
+            raise RuntimeError("Gemini API key is not configured in backend environment.")
+
+        prompt = f"""You are a multi-platform content strategist.
+Adapt this core video concept into 4 distinct, platform-optimized formats.
+Do NOT just duplicate the same text; each format must match the platform's native psychology, duration, and hook mechanics.
+
+Topic: {topic}
+Original Script: {base_script.script}
+Language: {base_script.language}
+
+OUTPUT FORMAT: Return ONLY valid JSON with keys:
+{{
+  "youtube_long": {{
+    "format_name": "YouTube Landscape (16:9)",
+    "target_duration": "60-90s",
+    "hook": "Educational curiosity hook",
+    "narration": "Detailed 3-part breakdown with clear insights",
+    "call_to_action": "Subscribe and comment prompt"
+  }},
+  "instagram_reel": {{
+    "format_name": "Instagram Reel (9:16)",
+    "target_duration": "30s",
+    "hook": "Relatable pattern interrupt",
+    "narration": "Fast, high-energy 30-second script with visual callouts",
+    "call_to_action": "Save this reel for later"
+  }},
+  "youtube_shorts": {{
+    "format_name": "YouTube Shorts (9:16)",
+    "target_duration": "20s",
+    "hook": "Urgent, surprising question",
+    "narration": "Snappy micro-script designed to loop smoothly",
+    "call_to_action": "Check description for details"
+  }},
+  "linkedin_post": {{
+    "format_name": "LinkedIn Thought Leadership (1:1)",
+    "target_duration": "45s",
+    "hook": "Professional industry perspective",
+    "narration": "Actionable business/career takeaway",
+    "call_to_action": "What is your experience? Comment below"
+  }}
+}}
+"""
+
+        candidate_models = ["gemini-flash-lite-latest", "gemini-2.5-flash-lite", self.default_model]
+        candidate_models = list(dict.fromkeys([m for m in candidate_models if m]))
+
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.4,
+                "maxOutputTokens": 1600,
+            },
+        }
+
+        headers = {"x-goog-api-key": self.api_key, "Content-Type": "application/json"}
+        last_error = None
+        for model in candidate_models:
+            gen_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+            try:
+                async with httpx.AsyncClient(timeout=25.0) as client:
+                    res = await client.post(gen_url, headers=headers, json=payload)
+                if res.status_code == 200:
+                    res_data = res.json()
+                    candidates = res_data.get("candidates", [])
+                    if candidates:
+                        raw_text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                        clean_text = raw_text.strip()
+                        match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", clean_text)
+                        if match:
+                            clean_text = match.group(1).strip()
+                        return json.loads(clean_text)
+                else:
+                    last_error = f"Model {model} returned HTTP {res.status_code}: {res.text[:120]}"
+            except Exception as e:
+                last_error = f"Model {model} exception: {str(e)}"
+                continue
+
+        raise RuntimeError(f"Gemini platform variants failed across candidates: {last_error}")
 
 
 gemini_service = GeminiService()

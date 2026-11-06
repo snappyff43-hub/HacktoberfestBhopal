@@ -27,10 +27,11 @@ export default function DiagnosticsPage() {
     const start = performance.now();
 
     try {
-      const [healthRes, aiRes, geminiRes, heygenRes, projectsRes, avatarsRes, voicesRes] = await Promise.allSettled([
+      const [healthRes, aiRes, geminiRes, nvidiaRes, heygenRes, projectsRes, avatarsRes, voicesRes] = await Promise.allSettled([
         api.getHealth(),
         api.getAIStatus(),
         api.getGeminiStatus(),
+        api.getNvidiaStatus(),
         api.getHeyGenStatus(),
         api.listProjects(),
         api.getAvatars(),
@@ -44,6 +45,7 @@ export default function DiagnosticsPage() {
         health: healthRes.status === 'fulfilled' ? healthRes.value : { status: 'error' },
         ai: aiRes.status === 'fulfilled' ? aiRes.value : { status: 'error' },
         gemini: geminiRes.status === 'fulfilled' ? geminiRes.value : { status: 'error' },
+        nvidia: nvidiaRes.status === 'fulfilled' ? nvidiaRes.value : { status: 'error' },
         heygen: heygenRes.status === 'fulfilled' ? heygenRes.value : { status: 'error' },
         projectsCount: projectsRes.status === 'fulfilled' ? projectsRes.value.length : 0,
         avatarsCount: avatarsRes.status === 'fulfilled' ? avatarsRes.value.total : 0,
@@ -120,8 +122,8 @@ export default function DiagnosticsPage() {
         </div>
       )}
 
-      {/* 3 Core Engine Diagnostic Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* 4 Core Engine Diagnostic Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Card 1: Local Gemma 4 + Ollama */}
         <div className="nm-card p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -187,7 +189,7 @@ export default function DiagnosticsPage() {
             </div>
             <div className="flex justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500">Fallback Resilience:</span>
-              <span className="text-slate-700">3-Model Automated Cascade</span>
+              <span className="text-slate-700">3-Model Cascade</span>
             </div>
             <div className="flex justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500">Latency:</span>
@@ -200,7 +202,52 @@ export default function DiagnosticsPage() {
           </div>
         </div>
 
-        {/* Card 3: HeyGen V3 Official API */}
+        {/* Card 3: NVIDIA NIM Cloud LLM */}
+        <div className="nm-card p-6 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl nm-card-sm flex items-center justify-center text-emerald-600">
+                <Zap className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-xs text-slate-800">NVIDIA NIM</h3>
+                <span className="text-[10px] text-slate-400">Cloud LLM & Variants</span>
+              </div>
+            </div>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+              systemStatus.nvidia.status === 'online'
+                ? 'bg-emerald-100 text-emerald-700'
+                : systemStatus.nvidia.status === 'unconfigured'
+                ? 'bg-slate-100 text-slate-600'
+                : 'bg-amber-100 text-amber-700'
+            }`}>
+              {systemStatus.nvidia.status === 'online' ? 'CONNECTED' : systemStatus.nvidia.status === 'unconfigured' ? 'OPTIONAL' : systemStatus.nvidia.status.toUpperCase()}
+            </span>
+          </div>
+
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between py-1 border-b border-slate-100">
+              <span className="text-slate-500">Model:</span>
+              <span className="font-mono text-slate-700 font-semibold text-[10px] truncate max-w-[130px]">{systemStatus.nvidia.model}</span>
+            </div>
+            <div className="flex justify-between py-1 border-b border-slate-100">
+              <span className="text-slate-500">Platform Adapter:</span>
+              <span className="text-slate-700">4-Way Social Formats</span>
+            </div>
+            <div className="flex justify-between py-1 border-b border-slate-100">
+              <span className="text-slate-500">Fallback Provider:</span>
+              <span className="text-slate-700 font-bold text-violet-600">Gemini 2.5/3.8</span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span className="text-slate-500">Status:</span>
+              <span className="text-slate-600 font-semibold">
+                {systemStatus.nvidia.status === 'online' ? 'Active' : 'Gemini Auto-Fallback'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 4: HeyGen V3 Official API */}
         <div className="nm-card p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-200">
             <div className="flex items-center gap-2.5">
@@ -222,7 +269,7 @@ export default function DiagnosticsPage() {
           <div className="space-y-2 text-xs">
             <div className="flex justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500">Workspace User:</span>
-              <span className="font-mono text-slate-700 text-[10px] truncate max-w-[150px]">
+              <span className="font-mono text-slate-700 text-[10px] truncate max-w-[140px]">
                 49b2360538cb4c23a8161b932db87016
               </span>
             </div>

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" fill="none">
+  <defs>
+    <linearGradient id="mpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#9333ea" />
+    </linearGradient>
+    <filter id="mpShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <rect width="960" height="480" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="958" height="478" rx="15" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Title -->
+  <g transform="translate(40, 30)">
+    <rect width="32" height="32" rx="8" fill="url(#mpGrad)"/>
+    <text x="16" y="22" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">🌐</text>
+    <text x="44" y="22" font-family="system-ui, sans-serif" font-weight="800" font-size="18" fill="#0f172a">CreatorFlow AI — Multi-Platform Adaptation Engine</text>
+    <text x="44" y="38" font-family="system-ui, sans-serif" font-weight="500" font-size="12" fill="#64748b">Transform One Single Core Idea Into 4 Native Platform Deliverables</text>
+  </g>
+
+  <!-- Central Hub: Master Approved Script -->
+  <g transform="translate(50, 160)">
+    <rect width="250" height="190" rx="12" fill="#ffffff" stroke="#6366f1" stroke-width="2" filter="url(#mpShadow)"/>
+    <rect x="0" y="0" width="130" height="24" rx="6" fill="#ede9fe"/>
+    <text x="65" y="16" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#5b21b6" text-anchor="middle">APPROVED SCRIPT</text>
+
+    <text x="20" y="55" font-family="system-ui, sans-serif" font-weight="700" font-size="15" fill="#0f172a">Master Video Script</text>
+    <text x="20" y="80" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Verified 3-second opening hook</text>
+    <text x="20" y="100" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Structured narration &amp; beats</text>
+    <text x="20" y="120" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• HeyGen video render ID</text>
+    <text x="20" y="140" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Core hashtags &amp; call-to-action</text>
+    
+    <rect x="15" y="155" width="220" height="24" rx="6" fill="#e0e7ff"/>
+    <text x="125" y="171" font-family="system-ui, sans-serif" font-weight="600" font-size="11" fill="#4338ca" text-anchor="middle">Multi-Format Adapter</text>
+  </g>
+
+  <!-- Connecting Lines from Central Hub -->
+  <path d="M300 255 L380 130" stroke="#6366f1" stroke-width="2"/>
+  <path d="M300 255 L380 215" stroke="#6366f1" stroke-width="2"/>
+  <path d="M300 255 L380 300" stroke="#6366f1" stroke-width="2"/>
+  <path d="M300 255 L380 385" stroke="#6366f1" stroke-width="2"/>
+
+  <!-- Output 1: YouTube -->
+  <g transform="translate(390, 95)">
+    <rect width="520" height="75" rx="10" fill="#ffffff" stroke="#ef4444" stroke-width="1.5" filter="url(#mpShadow)"/>
+    <rect x="15" y="15" width="45" height="45" rx="8" fill="#fee2e2"/>
+    <text x="37" y="42" font-family="system-ui, sans-serif" font-size="22" text-anchor="middle">▶️</text>
+    <text x="75" y="32" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">YouTube / Shorts Packaging</text>
+    <text x="75" y="50" font-family="system-ui, sans-serif" font-size="11" fill="#475569">SEO title, keyword tags, timestamps, pinned comment &amp; 16:9 / 9:16 HeyGen video</text>
+  </g>
+
+  <!-- Output 2: Instagram -->
+  <g transform="translate(390, 180)">
+    <rect width="520" height="75" rx="10" fill="#ffffff" stroke="#ec4899" stroke-width="1.5" filter="url(#mpShadow)"/>
+    <rect x="15" y="15" width="45" height="45" rx="8" fill="#fce7f3"/>
+    <text x="37" y="42" font-family="system-ui, sans-serif" font-size="22" text-anchor="middle">📸</text>
+    <text x="75" y="32" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">Instagram Reels Packaging</text>
+    <text x="75" y="50" font-family="system-ui, sans-serif" font-size="11" fill="#475569">Visual thumbnail hook, 9:16 vertical avatar sync, trending audio prompt &amp; 15 tags</text>
+  </g>
+
+  <!-- Output 3: LinkedIn -->
+  <g transform="translate(390, 265)">
+    <rect width="520" height="75" rx="10" fill="#ffffff" stroke="#0284c7" stroke-width="1.5" filter="url(#mpShadow)"/>
+    <rect x="15" y="15" width="45" height="45" rx="8" fill="#e0f2fe"/>
+    <text x="37" y="42" font-family="system-ui, sans-serif" font-size="22" text-anchor="middle">💼</text>
+    <text x="75" y="32" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">LinkedIn Thought Leadership</text>
+    <text x="75" y="50" font-family="system-ui, sans-serif" font-size="11" fill="#475569">Professional narrative hook, bulleted takeaways, discussion question &amp; video link</text>
+  </g>
+
+  <!-- Output 4: Twitter / X -->
+  <g transform="translate(390, 350)">
+    <rect width="520" height="75" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" filter="url(#mpShadow)"/>
+    <rect x="15" y="15" width="45" height="45" rx="8" fill="#f1f5f9"/>
+    <text x="37" y="42" font-family="system-ui, sans-serif" font-size="22" text-anchor="middle">🐦</text>
+    <text x="75" y="32" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">X (Twitter) Thread Breakdown</text>
+    <text x="75" y="50" font-family="system-ui, sans-serif" font-size="11" fill="#475569">Scroll-stopping 280-char opener, 4-tweet insight chain &amp; embedded clip CTA</text>
+  </g>
+</svg>

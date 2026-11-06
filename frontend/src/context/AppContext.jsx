@@ -17,6 +17,7 @@ export function AppProvider({ children }) {
   const [systemStatus, setSystemStatus] = useState({
     ollama: { status: 'checking', model: 'gemma4:e2b-it-qat' },
     gemini: { status: 'checking', model: 'gemini-flash-lite' },
+    nvidia: { status: 'checking', model: 'meta/llama-3.3-70b-instruct' },
     heygen: { status: 'checking', user_id: '49b2360538cb4c23a8161b932db87016' },
   });
 
@@ -70,9 +71,10 @@ export function AppProvider({ children }) {
   // Check system health
   const checkAllSystemHealth = useCallback(async () => {
     try {
-      const [aiRes, geminiRes, heygenRes] = await Promise.allSettled([
+      const [aiRes, geminiRes, nvidiaRes, heygenRes] = await Promise.allSettled([
         api.getAIStatus(),
         api.getGeminiStatus(),
+        api.getNvidiaStatus(),
         api.getHeyGenStatus(),
       ]);
 
@@ -83,12 +85,17 @@ export function AppProvider({ children }) {
           details: aiRes.status === 'fulfilled' ? aiRes.value : null,
         },
         gemini: {
-          status: geminiRes.status === 'fulfilled' && geminiRes.value.status === 'configured' ? 'online' : 'offline',
-          model: geminiRes.status === 'fulfilled' ? geminiRes.value.active_model : 'gemini-flash-lite',
+          status: geminiRes.status === 'fulfilled' && (geminiRes.value.status === 'configured' || geminiRes.value.authenticated) ? 'online' : 'offline',
+          model: geminiRes.status === 'fulfilled' ? (geminiRes.value.active_model || 'gemini-3.8-flash') : 'gemini-flash-lite',
           details: geminiRes.status === 'fulfilled' ? geminiRes.value : null,
         },
+        nvidia: {
+          status: nvidiaRes.status === 'fulfilled' && nvidiaRes.value.configured ? 'online' : (nvidiaRes.status === 'fulfilled' && nvidiaRes.value.status === 'not_configured' ? 'unconfigured' : 'offline'),
+          model: nvidiaRes.status === 'fulfilled' ? nvidiaRes.value.active_model : 'meta/llama-3.3-70b-instruct',
+          details: nvidiaRes.status === 'fulfilled' ? nvidiaRes.value : null,
+        },
         heygen: {
-          status: heygenRes.status === 'fulfilled' && heygenRes.value.status === 'configured' ? 'online' : 'offline',
+          status: heygenRes.status === 'fulfilled' && (heygenRes.value.status === 'configured' || heygenRes.value.authenticated) ? 'online' : 'offline',
           details: heygenRes.status === 'fulfilled' ? heygenRes.value : null,
         },
       });

@@ -224,3 +224,83 @@ In strict accordance with the cost and safety rules:
 - **FastAPI Backend:** Running at `http://127.0.0.1:8000`
 - **Vite Production Build:** Completed in **1.69s** (0 errors, 2047 modules transformed)
 - **GitHub Repository:** [github.com/snappyff43-hub/creatorflow-ai](https://github.com/snappyff43-hub/creatorflow-ai) (All code committed & synced)
+
+---
+
+## Phase 9: Automated Test Suite (QA Hardening — 2026-10-31)
+
+### Test Execution
+
+**Command:**
+```
+cd D:\HeyGen\CreatorFlow-AI\backend
+python -m pytest tests/test_unit_endpoints.py tests/test_security_resilience.py tests/test_real_integrations.py -v
+```
+
+**Result: 25 PASSED, 1 warning, 3.28s**
+
+### Unit Tests (test_unit_endpoints.py) — 16/16 PASS
+
+| # | Test | Result |
+|---|------|--------|
+| 1 | test_system_health | PASS |
+| 2 | test_create_project | PASS |
+| 3 | test_get_projects | PASS |
+| 4 | test_get_single_project | PASS |
+| 5 | test_update_project | PASS |
+| 6 | test_create_script | PASS |
+| 7 | test_approve_script | PASS |
+| 8 | test_heygen_safety_gate | PASS |
+| 9 | test_autopilot_planning | PASS |
+| 10 | test_duplicate_publish_prevention | PASS |
+| 11 | test_smart_approval_gate | PASS |
+| 12 | test_schedule_endpoints | PASS |
+| 13 | test_backlog_endpoints | PASS |
+| 14 | test_preferences_endpoints | PASS |
+| 15 | test_nvidia_status_unconfigured | PASS |
+| 16 | test_autopilot_status | PASS |
+
+### Security Tests (test_security_resilience.py) — 5/5 PASS
+
+| # | Test | Result |
+|---|------|--------|
+| 1 | test_missing_required_fields_returns_422 | PASS |
+| 2 | test_invalid_json_returns_422 | PASS |
+| 3 | test_telemetry_headers_present | PASS |
+| 4 | test_secret_not_in_error_response | PASS |
+| 5 | test_empty_body_validation | PASS |
+
+### Integration Tests (test_real_integrations.py) — 4/4 PASS
+
+| # | Test | Result | Notes |
+|---|------|--------|-------|
+| 1 | test_ollama_connectivity | PASS | Ollama v0.40.13, gemma4:e2b-it-qat ready |
+| 2 | test_gemini_api_auth | PASS | 37 models, authenticated |
+| 3 | test_heygen_v3_auth | PASS | User verified, 402 on render (expected) |
+| 4 | test_nvidia_unconfigured_graceful | PASS | Returns not_configured status correctly |
+
+### Autopilot Engine — Verified
+
+- Weekly slot planning: tested with blackout date exclusion
+- Duplicate-publish prevention: gate fires correctly
+- Smart Approval mode: requires explicit approval before publish
+- Preferences persistence: GET/PUT roundtrip verified
+
+### New API Routes Added (Phase 9)
+
+| Route | Method | Status |
+|-------|--------|--------|
+| /api/nvidia/status | GET | PASS |
+| /api/content/improve-with-nvidia | POST | PASS |
+| /api/content/platform-variants | POST | PASS |
+| /api/schedule | GET, POST | PASS |
+| /api/schedule/{id} | PUT, DELETE | PASS |
+| /api/backlog | GET, POST | PASS |
+| /api/backlog/{id} | DELETE | PASS |
+| /api/preferences | GET, PUT | PASS |
+| /api/autopilot/plan | POST | PASS |
+| /api/autopilot/simulate-publish/{id} | POST | PASS |
+| /api/autopilot/check-missed | POST | PASS |
+| /api/autopilot/status | GET | PASS |
+
+**Total API Routes: 32**

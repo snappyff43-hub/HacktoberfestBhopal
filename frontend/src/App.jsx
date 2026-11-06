@@ -9,6 +9,7 @@ import ScriptEditorPage from './pages/ScriptEditorPage';
 import AvatarVoiceStudioPage from './pages/AvatarVoiceStudioPage';
 import VideoRenderPage from './pages/VideoRenderPage';
 import LibraryPage from './pages/LibraryPage';
+import CalendarPage from './pages/CalendarPage';
 import DiagnosticsPage from './pages/DiagnosticsPage';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
               <Route path="/script" element={<ScriptEditorPage />} />
               <Route path="/avatar" element={<AvatarVoiceStudioPage />} />
               <Route path="/render" element={<VideoRenderPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/library" element={<LibraryPage />} />
               <Route path="/diagnostics" element={<DiagnosticsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />

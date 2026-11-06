@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 360" fill="none">
+  <defs>
+    <linearGradient id="stepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+    <filter id="stepShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1000" height="360" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="998" height="358" rx="15" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Heading -->
+  <g transform="translate(40, 25)">
+    <text font-family="system-ui, sans-serif" font-weight="800" font-size="20" fill="#0f172a">
+      From One Idea to an Entire Content Campaign
+    </text>
+    <text y="24" font-family="system-ui, sans-serif" font-weight="500" font-size="12" fill="#64748b">
+      The complete creator journey executed in CreatorFlow AI
+    </text>
+  </g>
+
+  <!-- Flow Steps Container -->
+  <g transform="translate(35, 80)">
+    <!-- STEP 1 -->
+    <g transform="translate(0, 0)">
+      <rect width="138" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#stepShadow)"/>
+      <circle cx="69" cy="40" r="24" fill="#ede9fe"/>
+      <text x="69" y="47" font-family="system-ui, sans-serif" font-size="20" text-anchor="middle">💡</text>
+      <rect x="24" y="75" width="90" height="20" rx="10" fill="#6366f1"/>
+      <text x="69" y="89" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#ffffff" text-anchor="middle">STEP 1</text>
+      <text x="69" y="118" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#0f172a" text-anchor="middle">One Idea</text>
+      <text x="69" y="142" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Creator enters topic,</text>
+      <text x="69" y="156" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">audience, tone &amp;</text>
+      <text x="69" y="170" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">target platform</text>
+    </g>
+
+    <!-- Arrow 1-2 -->
+    <path d="M142 115 L154 115" stroke="#6366f1" stroke-width="2"/>
+    <polygon points="152,112 158,115 152,118" fill="#6366f1"/>
+
+    <!-- STEP 2 -->
+    <g transform="translate(160, 0)">
+      <rect width="138" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#stepShadow)"/>
+      <circle cx="69" cy="40" r="24" fill="#e0f2fe"/>
+      <text x="69" y="47" font-family="system-ui, sans-serif" font-size="20" text-anchor="middle">📝</text>
+      <rect x="24" y="75" width="90" height="20" rx="10" fill="#0284c7"/>
+      <text x="69" y="89" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#ffffff" text-anchor="middle">STEP 2</text>
+      <text x="69" y="118" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#0f172a" text-anchor="middle">AI Script Draft</text>
+      <text x="69" y="142" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Local Gemma 4</text>
+      <text x="69" y="156" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">generates hook,</text>
+      <text x="69" y="170" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">scenes &amp; narration</text>
+    </g>
+
+    <!-- Arrow 2-3 -->
+    <path d="M302 115 L314 115" stroke="#6366f1" stroke-width="2"/>
+    <polygon points="312,112 318,115 312,118" fill="#6366f1"/>
+
+    <!-- STEP 3 -->
+    <g transform="translate(320, 0)">
+      <rect width="138" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#stepShadow)"/>
+      <circle cx="69" cy="40" r="24" fill="#ede9fe"/>
+      <text x="69" y="47" font-family="system-ui, sans-serif" font-size="20" text-anchor="middle">✨</text>
+      <rect x="24" y="75" width="90" height="20" rx="10" fill="#7c3aed"/>
+      <text x="69" y="89" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#ffffff" text-anchor="middle">STEP 3</text>
+      <text x="69" y="118" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#0f172a" text-anchor="middle">AI Refinement</text>
+      <text x="69" y="142" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Cloud NVIDIA /</text>
+      <text x="69" y="156" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Gemini polish with</text>
+      <text x="69" y="170" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">side-by-side diff</text>
+    </g>
+
+    <!-- Arrow 3-4 -->
+    <path d="M462 115 L474 115" stroke="#6366f1" stroke-width="2"/>
+    <polygon points="472,112 478,115 472,118" fill="#6366f1"/>
+
+    <!-- STEP 4 -->
+    <g transform="translate(480, 0)">
+      <rect width="138" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#stepShadow)"/>
+      <circle cx="69" cy="40" r="24" fill="#fce7f3"/>
+      <text x="69" y="47" font-family="system-ui, sans-serif" font-size="20" text-anchor="middle">🌐</text>
+      <rect x="24" y="75" width="90" height="20" rx="10" fill="#db2777"/>
+      <text x="69" y="89" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#ffffff" text-anchor="middle">STEP 4</text>
+      <text x="69" y="118" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#0f172a" text-anchor="middle">Multi-Platform</text>
+      <text x="69" y="142" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Adapts script into</text>
+      <text x="69" y="156" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">YouTube, IG Reel,</text>
+      <text x="69" y="170" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">LinkedIn &amp; X thread</text>
+    </g>
+
+    <!-- Arrow 4-5 -->
+    <path d="M622 115 L634 115" stroke="#6366f1" stroke-width="2"/>
+    <polygon points="632,112 638,115 632,118" fill="#6366f1"/>
+
+    <!-- STEP 5 -->
+    <g transform="translate(640, 0)">
+      <rect width="138" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#stepShadow)"/>
+      <circle cx="69" cy="40" r="24" fill="#fdf4ff"/>
+      <text x="69" y="47" font-family="system-ui, sans-serif" font-size="20" text-anchor="middle">🎬</text>
+      <rect x="24" y="75" width="90" height="20" rx="10" fill="#9333ea"/>
+      <text x="69" y="89" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#ffffff" text-anchor="middle">STEP 5</text>
+      <text x="69" y="118" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#0f172a" text-anchor="middle">HeyGen Video</text>
+      <text x="69" y="142" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Select avatar, voice</text>
+      <text x="69" y="156" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">&amp; render video</text>
+      <text x="69" y="170" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">with credit safety</text>
+    </g>
+
+    <!-- Arrow 5-6 -->
+    <path d="M782 115 L794 115" stroke="#6366f1" stroke-width="2"/>
+    <polygon points="792,112 798,115 792,118" fill="#6366f1"/>
+
+    <!-- STEP 6 -->
+    <g transform="translate(800, 0)">
+      <rect width="130" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#stepShadow)"/>
+      <circle cx="65" cy="40" r="24" fill="#ecfdf5"/>
+      <text x="65" y="47" font-family="system-ui, sans-serif" font-size="20" text-anchor="middle">📅</text>
+      <rect x="20" y="75" width="90" height="20" rx="10" fill="#059669"/>
+      <text x="65" y="89" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#ffffff" text-anchor="middle">STEP 6</text>
+      <text x="65" y="118" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#0f172a" text-anchor="middle">Smart Calendar</text>
+      <text x="65" y="142" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Persistent asset</text>
+      <text x="65" y="156" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">library, calendar</text>
+      <text x="65" y="170" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">&amp; Autopilot approval</text>
+    </g>
+  </g>
+</svg>

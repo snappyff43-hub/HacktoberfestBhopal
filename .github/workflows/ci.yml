@@ -30,6 +30,11 @@ jobs:
           cd backend
           python -c "from app.database.database import init_db; init_db(); print('Database tables successfully initialized')"
 
+      - name: Run pytest automated test suite
+        run: |
+          cd backend
+          pytest tests/test_unit_endpoints.py tests/test_security_resilience.py -v
+
   frontend-build:
     name: Frontend Production Build
     runs-on: ubuntu-latest

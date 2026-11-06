@@ -41,12 +41,32 @@ class Project(Base):
     selected_voice_name = Column(String(100), nullable=True)
     aspect_ratio = Column(String(20), default="16:9")  # 16:9, 9:16, 1:1
 
+    platform_variants_json = Column(Text, nullable=True)  # JSON-encoded platform variations
+    scheduled_at = Column(DateTime, nullable=True)
+    published_at = Column(DateTime, nullable=True)
+    published_url = Column(Text, nullable=True)
+    publishing_mode = Column(String(50), default="smart_approval")  # manual, smart_approval, autopilot
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates="projects")
     scripts = relationship("GeneratedScript", back_populates="project", cascade="all, delete-orphan")
     video_jobs = relationship("VideoJob", back_populates="project", cascade="all, delete-orphan")
+    scheduled_posts = relationship("ScheduledPost", back_populates="project", cascade="all, delete-orphan")
+
+    @property
+    def platform_variants(self):
+        if not self.platform_variants_json:
+            return {}
+        try:
+            return json.loads(self.platform_variants_json)
+        except Exception:
+            return {}
+
+    @platform_variants.setter
+    def platform_variants(self, value):
+        self.platform_variants_json = json.dumps(value) if value is not None else None
 
 
 class GeneratedScript(Base):
@@ -65,6 +85,7 @@ class GeneratedScript(Base):
     description = Column(Text, nullable=True)
     call_to_action = Column(Text, nullable=True)
     is_approved = Column(Boolean, default=False)
+    ai_provider = Column(String(50), default="gemma4")  # gemma4, nvidia, gemini, manual
     version = Column(Integer, default=1)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -139,3 +160,71 @@ class Setting(Base):
     key = Column(String(100), primary_key=True)
     value = Column(Text, nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class ScheduledPost(Base):
+    """Content publishing schedule queue entity.
+
+    Persistent job states:
+    DRAFT, CONTENT_GENERATING, NEEDS_APPROVAL, APPROVED, VIDEO_GENERATING,
+    READY_TO_PUBLISH, SCHEDULED, PUBLISHING, PUBLISHED, FAILED.
+    """
+    __tablename__ = "scheduled_posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey("projects.id"), nullable=True)
+    platform = Column(String(50), nullable=False, default="YouTube")  # YouTube, Instagram Reels, YouTube Shorts, LinkedIn
+    title = Column(String(255), nullable=False)
+    script = Column(Text, nullable=True)
+    video_url = Column(Text, nullable=True)
+    thumbnail_url = Column(Text, nullable=True)
+    scheduled_datetime = Column(DateTime, nullable=False, index=True)
+    status = Column(String(50), default="SCHEDULED", index=True)
+    published_url = Column(Text, nullable=True)
+    error_message = Column(Text, nullable=True)
+    retry_count = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    project = relationship("Project", back_populates="scheduled_posts")
+
+
+class TopicBacklog(Base):
+    """Approved topic backlog for intelligent scheduling and autopilot generation."""
+    __tablename__ = "topic_backlogs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    topic = Column(Text, nullable=False)
+    target_audience = Column(String(150), default="College Students")
+    language = Column(String(50), default="Hindi")
+    preferred_platform = Column(String(50), default="YouTube")
+    status = Column(String(50), default="backlog")  # backlog, in_progress, completed, archived
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class CreatorPreference(Base):
+    """Creator publishing schedule, timezone, availability and autopilot settings."""
+    __tablename__ = "creator_preferences"
+
+    id = Column(Integer, primary_key=True, index=True)
+    posting_days = Column(String(150), default="Monday,Wednesday,Friday")
+    posting_time = Column(String(20), default="18:00")
+    timezone = Column(String(50), default="Asia/Kolkata")
+    unavailable_dates_json = Column(Text, default="[]")  # List of ISO date strings YYYY-MM-DD
+    mode = Column(String(50), default="smart_approval")  # manual, smart_approval, autopilot
+    spending_limit_credits = Column(Integer, default=5)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    @property
+    def unavailable_dates(self):
+        if not self.unavailable_dates_json:
+            return []
+        try:
+            return json.loads(self.unavailable_dates_json)
+        except Exception:
+            return []
+
+    @unavailable_dates.setter
+    def unavailable_dates(self, value):
+        self.unavailable_dates_json = json.dumps(value) if value is not None else "[]"
+

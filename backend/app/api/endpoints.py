@@ -1,11 +1,20 @@
 """FastAPI API endpoints for CreatorFlow AI."""
 
 import json
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database.database import get_db
-from app.models.project import GeneratedScript, Project, VideoAsset, VideoJob
+from app.models.project import (
+    GeneratedScript, 
+    Project, 
+    VideoAsset, 
+    VideoJob, 
+    ScheduledPost, 
+    TopicBacklog, 
+    CreatorPreference
+)
 from app.schemas.project import (
     AIStatusResponse,
     ContentGenerateRequest,
@@ -18,10 +27,21 @@ from app.schemas.project import (
     ScriptUpdateRequest,
     VideoJobResponse,
     GeminiImproveRequest,
+    NvidiaImproveRequest,
+    PlatformVariantsRequest,
+    ScheduledPostCreate,
+    ScheduledPostUpdate,
+    ScheduledPostResponse,
+    TopicBacklogCreate,
+    TopicBacklogResponse,
+    CreatorPreferenceUpdate,
+    CreatorPreferenceResponse,
 )
 from app.services.gemma_service import gemma_service
 from app.services.heygen_service import heygen_service
 from app.services.gemini_service import gemini_service
+from app.services.nvidia_service import nvidia_service
+from app.services.autopilot_service import autopilot_service
 
 router = APIRouter(prefix="/api", tags=["creatorflow"])
 
@@ -48,6 +68,12 @@ async def get_ai_status():
 async def get_gemini_status():
     """Check Gemini API connection and model readiness."""
     return await gemini_service.verify_auth()
+
+
+@router.get("/nvidia/status")
+async def get_nvidia_status():
+    """Check NVIDIA NIM Cloud API connection, authentication, and model catalog."""
+    return await nvidia_service.verify_auth()
 
 
 @router.get("/heygen/status", response_model=HeyGenStatusResponse)
@@ -602,3 +628,330 @@ async def get_library(db: Session = Depends(get_db)):
                 "is_demo": job.is_demo,
             })
     return {"items": items, "total": len(items)}
+
+
+# --- NVIDIA NIM & Platform Adaptation Endpoints ---
+
+@router.post("/content/improve-with-nvidia")
+async def improve_content_with_nvidia(req: NvidiaImproveRequest, db: Session = Depends(get_db)):
+    """User requests script polish and refinement via NVIDIA NIM Cloud LLM (or Gemini fallback)."""
+    project = db.query(Project).filter(Project.id == req.project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    latest_script = (
+        db.query(GeneratedScript)
+        .filter(GeneratedScript.project_id == project.id)
+        .order_by(GeneratedScript.version.desc())
+        .first()
+    )
+    if not latest_script:
+        raise HTTPException(status_code=400, detail="No script found for this project.")
+
+    base_content = GeneratedContentSchema(
+        title=latest_script.title,
+        hook=latest_script.hook or "",
+        script=latest_script.script,
+        language=latest_script.language,
+        scenes=latest_script.scenes,
+        caption=latest_script.caption or "",
+        hashtags=latest_script.hashtags,
+        description=latest_script.description or "",
+        call_to_action=latest_script.call_to_action or "",
+    )
+
+    ai_provider = "nvidia"
+    try:
+        if nvidia_service.is_configured():
+            improved = await nvidia_service.improve_script(
+                base_script=base_content,
+                instructions=req.instructions,
+                model_name=req.model_name,
+            )
+        else:
+            improved = await gemini_service.improve_script(
+                base_script=base_content,
+                instructions=req.instructions or "Elevate retention and pacing for HeyGen avatar delivery",
+            )
+            ai_provider = "gemini_fallback"
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Script enhancement failed: {str(e)}",
+        )
+
+    new_version = (latest_script.version + 1) if latest_script else 1
+    script_record = GeneratedScript(
+        project_id=project.id,
+        title=improved.title,
+        hook=improved.hook,
+        script=improved.script,
+        language=improved.language,
+        scenes_json=json.dumps([s.model_dump() for s in improved.scenes]),
+        caption=improved.caption,
+        hashtags_json=json.dumps(improved.hashtags),
+        description=improved.description,
+        call_to_action=improved.call_to_action,
+        is_approved=False,
+        ai_provider=ai_provider,
+        version=new_version,
+    )
+    db.add(script_record)
+    project.title = improved.title
+    db.commit()
+
+    return {
+        "project_id": project.id,
+        "original": base_content.model_dump(),
+        "improved": improved.model_dump(),
+        "provider": ai_provider,
+        "version": new_version,
+    }
+
+
+@router.post("/content/platform-variants")
+async def generate_platform_variants(req: PlatformVariantsRequest, db: Session = Depends(get_db)):
+    """Adapt approved script into 4 platform formats (YouTube, IG Reels, Shorts, LinkedIn)."""
+    project = db.query(Project).filter(Project.id == req.project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    latest_script = (
+        db.query(GeneratedScript)
+        .filter(GeneratedScript.project_id == project.id)
+        .order_by(GeneratedScript.version.desc())
+        .first()
+    )
+    if not latest_script:
+        raise HTTPException(status_code=400, detail="No script exists for this project.")
+
+    base_content = GeneratedContentSchema(
+        title=latest_script.title,
+        hook=latest_script.hook or "",
+        script=latest_script.script,
+        language=latest_script.language,
+        scenes=latest_script.scenes,
+        caption=latest_script.caption or "",
+        hashtags=latest_script.hashtags,
+        description=latest_script.description or "",
+        call_to_action=latest_script.call_to_action or "",
+    )
+
+    try:
+        if req.provider == "nvidia" and nvidia_service.is_configured():
+            variants = await nvidia_service.generate_platform_variants(
+                base_content,
+                topic=project.topic,
+            )
+            provider_used = "nvidia"
+        else:
+            variants = await gemini_service.generate_platform_variants(
+                base_content,
+                topic=project.topic,
+            )
+            provider_used = "gemini"
+
+        project.platform_variants = variants
+        db.commit()
+
+        return {
+            "project_id": project.id,
+            "variants": variants,
+            "provider": provider_used,
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Platform variant generation failed: {str(e)}",
+        )
+
+
+# --- Intelligent Publishing Schedule Endpoints ---
+
+@router.get("/schedule", response_model=List[ScheduledPostResponse])
+async def list_scheduled_posts(db: Session = Depends(get_db)):
+    """List all scheduled posts ordered chronologically."""
+    return db.query(ScheduledPost).order_by(ScheduledPost.scheduled_datetime.asc()).all()
+
+
+@router.post("/schedule", response_model=ScheduledPostResponse)
+async def create_scheduled_post(req: ScheduledPostCreate, db: Session = Depends(get_db)):
+    """Add a video or content post to the scheduling queue."""
+    post = ScheduledPost(
+        project_id=req.project_id,
+        platform=req.platform,
+        title=req.title,
+        script=req.script,
+        video_url=req.video_url,
+        thumbnail_url=req.thumbnail_url,
+        scheduled_datetime=req.scheduled_datetime,
+        status=req.status or "SCHEDULED",
+    )
+    db.add(post)
+    db.commit()
+    db.refresh(post)
+    return post
+
+
+@router.put("/schedule/{post_id}", response_model=ScheduledPostResponse)
+async def update_scheduled_post(post_id: int, req: ScheduledPostUpdate, db: Session = Depends(get_db)):
+    """Update scheduled date, status, or published link of a post."""
+    post = db.query(ScheduledPost).filter(ScheduledPost.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Scheduled post not found")
+
+    if req.scheduled_datetime is not None:
+        post.scheduled_datetime = req.scheduled_datetime
+    if req.status is not None:
+        post.status = req.status
+    if req.published_url is not None:
+        post.published_url = req.published_url
+    if req.error_message is not None:
+        post.error_message = req.error_message
+
+    db.commit()
+    db.refresh(post)
+    return post
+
+
+@router.delete("/schedule/{post_id}")
+async def delete_scheduled_post(post_id: int, db: Session = Depends(get_db)):
+    """Remove a post from the publishing queue."""
+    post = db.query(ScheduledPost).filter(ScheduledPost.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Scheduled post not found")
+    db.delete(post)
+    db.commit()
+    return {"message": "Scheduled post deleted", "id": post_id}
+
+
+# --- Topic Backlog & Intelligent Autopilot Endpoints ---
+
+@router.get("/backlog", response_model=List[TopicBacklogResponse])
+async def list_backlog(db: Session = Depends(get_db)):
+    """List approved topic backlog entries."""
+    return db.query(TopicBacklog).order_by(TopicBacklog.created_at.desc()).all()
+
+
+@router.post("/backlog", response_model=TopicBacklogResponse)
+async def add_backlog_topic(req: TopicBacklogCreate, db: Session = Depends(get_db)):
+    """Add a new idea or topic to the creator backlog."""
+    item = TopicBacklog(
+        topic=req.topic,
+        target_audience=req.target_audience or "College Students",
+        language=req.language or "Hindi",
+        preferred_platform=req.preferred_platform or "YouTube",
+        status="backlog",
+    )
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return item
+
+
+@router.delete("/backlog/{topic_id}")
+async def delete_backlog_topic(topic_id: int, db: Session = Depends(get_db)):
+    """Remove a topic from the backlog."""
+    item = db.query(TopicBacklog).filter(TopicBacklog.id == topic_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Backlog topic not found")
+    db.delete(item)
+    db.commit()
+    return {"message": "Topic removed from backlog", "id": topic_id}
+
+
+# --- Creator Preferences & Publishing Cadence Endpoints ---
+
+@router.get("/preferences", response_model=CreatorPreferenceResponse)
+async def get_creator_preferences(db: Session = Depends(get_db)):
+    """Get creator publishing settings and autopilot rules."""
+    pref = db.query(CreatorPreference).first()
+    if not pref:
+        pref = CreatorPreference()
+        db.add(pref)
+        db.commit()
+        db.refresh(pref)
+    return pref
+
+
+@router.put("/preferences", response_model=CreatorPreferenceResponse)
+async def update_creator_preferences(req: CreatorPreferenceUpdate, db: Session = Depends(get_db)):
+    """Update creator publishing cadence, unavailable dates, and autopilot settings."""
+    pref = db.query(CreatorPreference).first()
+    if not pref:
+        pref = CreatorPreference()
+        db.add(pref)
+
+    if req.posting_days is not None:
+        pref.posting_days = req.posting_days
+    if req.posting_time is not None:
+        pref.posting_time = req.posting_time
+    if req.timezone is not None:
+        pref.timezone = req.timezone
+    if req.unavailable_dates is not None:
+        pref.unavailable_dates = req.unavailable_dates
+    if req.mode is not None:
+        pref.mode = req.mode
+    if req.spending_limit_credits is not None:
+        pref.spending_limit_credits = req.spending_limit_credits
+
+    db.commit()
+    db.refresh(pref)
+    return pref
+
+
+# --- Autopilot Engine & Safety Gate Endpoints ---
+
+@router.post("/autopilot/plan")
+async def plan_autopilot_schedule(days_ahead: int = 7, db: Session = Depends(get_db)):
+    """Evaluate creator schedule, filter blackout dates, and allocate backlog topics."""
+    return autopilot_service.plan_weekly_slots(db=db, days_ahead=days_ahead)
+
+
+@router.post("/autopilot/simulate-publish/{post_id}")
+async def simulate_post_publish(post_id: int, require_approval: bool = True, db: Session = Depends(get_db)):
+    """Simulate publishing a scheduled slot with duplicate-prevention and Smart Approval gates."""
+    try:
+        return autopilot_service.simulate_publishing(db=db, post_id=post_id, require_approval=require_approval)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.post("/autopilot/check-missed")
+async def check_missed_slots(db: Session = Depends(get_db)):
+    """Detect and handle scheduled slots that passed their publishing window."""
+    handled = autopilot_service.evaluate_missed_slots(db=db)
+    return {"missed_slots_handled": len(handled), "details": handled}
+
+
+@router.get("/autopilot/status")
+async def get_autopilot_status(db: Session = Depends(get_db)):
+    """Summary of autopilot state, pending approval count, and next planned post."""
+    pref = autopilot_service.get_or_create_preferences(db)
+    backlog_count = db.query(TopicBacklog).filter(TopicBacklog.status == "backlog").count()
+    pending_approval_count = (
+        db.query(ScheduledPost).filter(ScheduledPost.status == "NEEDS_APPROVAL").count()
+    )
+    next_post = (
+        db.query(ScheduledPost)
+        .filter(ScheduledPost.scheduled_datetime > datetime.utcnow())
+        .order_by(ScheduledPost.scheduled_datetime.asc())
+        .first()
+    )
+
+    return {
+        "mode": pref.mode,
+        "posting_days": pref.posting_days,
+        "posting_time": pref.posting_time,
+        "unavailable_dates": pref.unavailable_dates,
+        "spending_limit_credits": pref.spending_limit_credits,
+        "backlog_items_ready": backlog_count,
+        "pending_smart_approvals": pending_approval_count,
+        "next_scheduled_post": {
+            "id": next_post.id,
+            "title": next_post.title,
+            "platform": next_post.platform,
+            "scheduled_datetime": next_post.scheduled_datetime.isoformat(),
+            "status": next_post.status,
+        } if next_post else None,
+    }

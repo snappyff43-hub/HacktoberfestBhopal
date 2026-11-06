@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" fill="none">
+  <defs>
+    <linearGradient id="aiGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <linearGradient id="aiGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    <filter id="aiShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <rect width="960" height="520" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="958" height="518" rx="15" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Title -->
+  <g transform="translate(40, 30)">
+    <rect width="32" height="32" rx="8" fill="url(#aiGrad1)"/>
+    <text x="16" y="22" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">🧠</text>
+    <text x="44" y="22" font-family="system-ui, sans-serif" font-weight="800" font-size="18" fill="#0f172a">CreatorFlow AI — Dual-Mode AI Workflow</text>
+    <text x="44" y="38" font-family="system-ui, sans-serif" font-weight="500" font-size="12" fill="#64748b">Local Gemma 4 Zero-Cost Generation + Cloud LLM Refinement Cascade</text>
+  </g>
+
+  <!-- STEP 1: USER INPUT -->
+  <g transform="translate(40, 85)">
+    <rect width="260" height="150" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#aiShadow)"/>
+    <rect x="0" y="0" width="90" height="22" rx="6" fill="#e0e7ff"/>
+    <text x="45" y="15" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#4338ca" text-anchor="middle">STAGE 1: INPUT</text>
+    <text x="20" y="50" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">Creator Idea &amp; Params</text>
+    <text x="20" y="72" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Core Idea &amp; Topic</text>
+    <text x="20" y="90" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Target Audience &amp; Platform</text>
+    <text x="20" y="108" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Language: English / हिन्दी / Hinglish</text>
+    <text x="20" y="126" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Tone: Casual, Professional, Punchy</text>
+  </g>
+
+  <!-- Arrow 1 to 2 -->
+  <path d="M300 160 L340 160" stroke="#6366f1" stroke-width="2.5"/>
+  <polygon points="338,156 346,160 338,164" fill="#6366f1"/>
+
+  <!-- STEP 2: LOCAL GEMMA 4 -->
+  <g transform="translate(350, 85)">
+    <rect width="270" height="150" rx="12" fill="#ffffff" stroke="#6366f1" stroke-width="2" filter="url(#aiShadow)"/>
+    <rect x="0" y="0" width="130" height="22" rx="6" fill="#ede9fe"/>
+    <text x="65" y="15" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#5b21b6" text-anchor="middle">STAGE 2: LOCAL INFERENCE</text>
+    <text x="20" y="50" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">Gemma 4 (via Ollama)</text>
+    <text x="20" y="72" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Model: gemma4:e2b-it-qat</text>
+    <text x="20" y="90" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Structured JSON Extraction</text>
+    <text x="20" y="108" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Script, Hook, Body &amp; Visual Scenes</text>
+    <text x="20" y="126" font-family="system-ui, sans-serif" font-weight="600" font-size="11" fill="#10b981">✓ 100% Offline / Zero API Tokens</text>
+  </g>
+
+  <!-- Arrow 2 to 3 -->
+  <path d="M620 160 L660 160" stroke="#6366f1" stroke-width="2.5"/>
+  <polygon points="658,156 666,160 658,164" fill="#6366f1"/>
+
+  <!-- STEP 3: INTERACTIVE SCRIPT EDITOR -->
+  <g transform="translate(670, 85)">
+    <rect width="250" height="150" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#aiShadow)"/>
+    <rect x="0" y="0" width="120" height="22" rx="6" fill="#dbeafe"/>
+    <text x="60" y="15" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#1e40af" text-anchor="middle">STAGE 3: USER REVIEW</text>
+    <text x="20" y="50" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">Interactive Script Editor</text>
+    <text x="20" y="72" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Live Word &amp; Speaking Pace</text>
+    <text x="20" y="90" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Scene Visual Prompts &amp; CTA</text>
+    <text x="20" y="108" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Optional Cloud Polish Trigger</text>
+    <text x="20" y="126" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Direct inline editing &amp; copy</text>
+  </g>
+
+  <!-- Downward Split from Script Editor to Cloud Refinement & HeyGen -->
+  <path d="M795 235 L795 280 L520 280 L520 310" stroke="#0284c7" stroke-width="2" stroke-dasharray="4 4"/>
+  <polygon points="516,308 520,316 524,308" fill="#0284c7"/>
+
+  <!-- STEP 4: CLOUD AI REFINEMENT CASCADE -->
+  <g transform="translate(40, 320)">
+    <rect width="500" height="165" rx="12" fill="#ffffff" stroke="#0284c7" stroke-width="1.5" filter="url(#aiShadow)"/>
+    <rect x="0" y="0" width="180" height="22" rx="6" fill="#e0f2fe"/>
+    <text x="90" y="15" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#0369a1" text-anchor="middle">STAGE 4: CLOUD POLISH CASCADE</text>
+
+    <g transform="translate(20, 36)">
+      <!-- NVIDIA NIM -->
+      <rect width="215" height="110" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+      <text x="15" y="24" font-family="system-ui, sans-serif" font-weight="700" font-size="12" fill="#0f172a">Primary: NVIDIA NIM</text>
+      <text x="15" y="44" font-family="system-ui, sans-serif" font-size="10" fill="#475569">• Llama-3.3-70b-instruct</text>
+      <text x="15" y="60" font-family="system-ui, sans-serif" font-size="10" fill="#475569">• High-speed cloud refinement</text>
+      <text x="15" y="76" font-family="system-ui, sans-serif" font-size="10" fill="#475569">• Hook retention &amp; pace polish</text>
+      <text x="15" y="94" font-family="system-ui, sans-serif" font-size="10" fill="#10b981">✓ Verified in live test</text>
+
+      <!-- Gemini API -->
+      <rect x="230" y="0" width="230" height="110" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+      <text x="245" y="24" font-family="system-ui, sans-serif" font-weight="700" font-size="12" fill="#0f172a">Secondary: Google Gemini</text>
+      <text x="245" y="44" font-family="system-ui, sans-serif" font-size="10" fill="#475569">• gemini-3.8-flash default</text>
+      <text x="245" y="60" font-family="system-ui, sans-serif" font-size="10" fill="#475569">• 3-tier model resilience fallback</text>
+      <text x="245" y="76" font-family="system-ui, sans-serif" font-size="10" fill="#475569">• Multi-platform package creator</text>
+      <text x="245" y="94" font-family="system-ui, sans-serif" font-size="10" fill="#6366f1">✓ Independent provider</text>
+    </g>
+  </g>
+
+  <!-- Arrow from Cloud to Approval -->
+  <path d="M540 400 L580 400" stroke="#6366f1" stroke-width="2"/>
+  <polygon points="578,396 586,400 578,404" fill="#6366f1"/>
+
+  <!-- STEP 5: DIFF & HUMAN APPROVAL -->
+  <g transform="translate(590, 320)">
+    <rect width="330" height="165" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#aiShadow)"/>
+    <rect x="0" y="0" width="160" height="22" rx="6" fill="#ecfdf5"/>
+    <text x="80" y="15" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#047857" text-anchor="middle">STAGE 5: APPROVAL GATE</text>
+
+    <text x="20" y="50" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#0f172a">Side-by-Side Diff &amp; Consent</text>
+    <text x="20" y="72" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Shows Original (Gemma) vs Polished (Cloud)</text>
+    <text x="20" y="90" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Word count delta &amp; duration estimate</text>
+    <text x="20" y="108" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• User clicks "Accept Cloud Polish" or "Keep Original"</text>
+    <text x="20" y="130" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#059669">➔ Passed to HeyGen Avatar Video Studio</text>
+  </g>
+</svg>

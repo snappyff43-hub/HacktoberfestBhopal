@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" fill="none">
+  <defs>
+    <linearGradient id="apGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <filter id="apShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <rect width="960" height="520" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="958" height="518" rx="15" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Title -->
+  <g transform="translate(40, 30)">
+    <rect width="32" height="32" rx="8" fill="url(#apGrad)"/>
+    <text x="16" y="22" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">⚡</text>
+    <text x="44" y="22" font-family="system-ui, sans-serif" font-weight="800" font-size="18" fill="#0f172a">CreatorFlow Autopilot — Automation &amp; Safety Pipeline</text>
+    <text x="44" y="38" font-family="system-ui, sans-serif" font-weight="500" font-size="12" fill="#64748b">Continuous Content Planning with Strict Human-in-the-Loop Safety Gates</text>
+  </g>
+
+  <!-- Box 1: Creator Preferences -->
+  <g transform="translate(40, 85)">
+    <rect width="260" height="170" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#apShadow)"/>
+    <rect x="0" y="0" width="130" height="22" rx="6" fill="#ecfdf5"/>
+    <text x="65" y="15" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#047857" text-anchor="middle">1. CONFIGURATION</text>
+
+    <text x="20" y="52" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">Creator Preferences</text>
+    <text x="20" y="74" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Target platforms (YT, IG, LI)</text>
+    <text x="20" y="92" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Posting days &amp; peak time slots</text>
+    <text x="20" y="110" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Preferred tone &amp; language</text>
+    <text x="20" y="128" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Autopilot mode: Assisted / Approval</text>
+    <text x="20" y="146" font-family="system-ui, sans-serif" font-weight="600" font-size="10" fill="#059669">✓ Implemented in Database &amp; API</text>
+  </g>
+
+  <!-- Arrow 1 to 2 -->
+  <path d="M300 170 L340 170" stroke="#059669" stroke-width="2.5"/>
+  <polygon points="338,166 346,170 338,174" fill="#059669"/>
+
+  <!-- Box 2: Backlog & Gap Detection -->
+  <g transform="translate(350, 85)">
+    <rect width="270" height="170" rx="12" fill="#ffffff" stroke="#0284c7" stroke-width="1.5" filter="url(#apShadow)"/>
+    <rect x="0" y="0" width="150" height="22" rx="6" fill="#e0f2fe"/>
+    <text x="75" y="15" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#0369a1" text-anchor="middle">2. TOPIC BACKLOG &amp; GAPS</text>
+
+    <text x="20" y="52" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">Gap Detector &amp; Queue</text>
+    <text x="20" y="74" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Scans upcoming calendar slots</text>
+    <text x="20" y="92" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Identifies empty schedule gaps</text>
+    <text x="20" y="110" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Pulls approved ideas from backlog</text>
+    <text x="20" y="128" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Auto-triggers Gemma draft</text>
+    <text x="20" y="146" font-family="system-ui, sans-serif" font-weight="600" font-size="10" fill="#0284c7">✓ Implemented in Autopilot Service</text>
+  </g>
+
+  <!-- Arrow 2 to 3 -->
+  <path d="M620 170 L660 170" stroke="#059669" stroke-width="2.5"/>
+  <polygon points="658,166 666,170 658,174" fill="#059669"/>
+
+  <!-- Box 3: Smart Approval Gate -->
+  <g transform="translate(670, 85)">
+    <rect width="250" height="170" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#apShadow)"/>
+    <rect x="0" y="0" width="160" height="22" rx="6" fill="#d1fae5"/>
+    <text x="80" y="15" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#065f46" text-anchor="middle">3. SAFETY APPROVAL GATE</text>
+
+    <text x="20" y="52" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#0f172a">Human Approval Guard</text>
+    <text x="20" y="74" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• AI NEVER renders paid video</text>
+    <text x="20" y="90" font-family="system-ui, sans-serif" font-size="11" fill="#475569">  without creator click</text>
+    <text x="20" y="108" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• One-click script audit</text>
+    <text x="20" y="126" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• Avatar/Voice confirmation</text>
+    <text x="20" y="146" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#059669">🛡️ 100% Token &amp; Credit Safe</text>
+  </g>
+
+  <!-- Lower Section: Execution & Future Social Publishing -->
+  <g transform="translate(40, 280)">
+    <rect width="880" height="210" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#apShadow)"/>
+    
+    <g transform="translate(25, 20)">
+      <text x="0" y="20" font-family="system-ui, sans-serif" font-weight="800" font-size="15" fill="#0f172a">Autopilot Execution Matrix: Implemented vs Future Work</text>
+      
+      <!-- Current State -->
+      <g transform="translate(0, 35)">
+        <rect width="400" height="135" rx="8" fill="#f0fdf4" stroke="#86efac"/>
+        <text x="15" y="24" font-family="system-ui, sans-serif" font-weight="700" font-size="12" fill="#166534">CURRENTLY IMPLEMENTED &amp; OPERATIONAL</text>
+        <text x="15" y="48" font-family="system-ui, sans-serif" font-size="11" fill="#15803d">✓ Posting schedule preferences &amp; target frequency</text>
+        <text x="15" y="68" font-family="system-ui, sans-serif" font-size="11" fill="#15803d">✓ Backlog idea queuing &amp; empty slot detection</text>
+        <text x="15" y="88" font-family="system-ui, sans-serif" font-size="11" fill="#15803d">✓ Auto-preparation of scripts &amp; scene descriptions</text>
+        <text x="15" y="108" font-family="system-ui, sans-serif" font-size="11" fill="#15803d">✓ Interactive visual Calendar with pending approval states</text>
+      </g>
+
+      <!-- Roadmap State -->
+      <g transform="translate(430, 35)">
+        <rect width="400" height="135" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+        <text x="15" y="24" font-family="system-ui, sans-serif" font-weight="700" font-size="12" fill="#64748b">FUTURE ROADMAP (REQUIRES OFFICIAL APP REVIEWS)</text>
+        <text x="15" y="48" font-family="system-ui, sans-serif" font-size="11" fill="#64748b">⏳ Direct YouTube Data API v3 OAuth video upload</text>
+        <text x="15" y="68" font-family="system-ui, sans-serif" font-size="11" fill="#64748b">⏳ Instagram Graph API Reels automatic publishing</text>
+        <text x="15" y="88" font-family="system-ui, sans-serif" font-size="11" fill="#64748b">⏳ LinkedIn Community API v2 post distribution</text>
+        <text x="15" y="108" font-family="system-ui, sans-serif" font-size="11" fill="#64748b">⏳ Audience performance analytics feedback loop</text>
+      </g>
+    </g>
+  </g>
+</svg>

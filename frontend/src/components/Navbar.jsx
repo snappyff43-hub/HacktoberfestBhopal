@@ -12,7 +12,8 @@ import {
   ChevronDown,
   Cpu,
   BrainCircuit,
-  Film
+  Film,
+  Calendar
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -31,6 +32,7 @@ export default function Navbar() {
     { to: '/script', label: 'Script Editor', icon: FileEdit },
     { to: '/avatar', label: 'Avatar & Voice', icon: UserCheck },
     { to: '/render', label: 'Video Render', icon: Video },
+    { to: '/calendar', label: 'Calendar', icon: Calendar },
     { to: '/library', label: 'Library', icon: FolderKanban },
     { to: '/diagnostics', label: 'Diagnostics', icon: Activity },
   ];

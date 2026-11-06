@@ -41,6 +41,7 @@ export const api = {
   getHealth: () => request('/health'),
   getAIStatus: () => request('/ai/status'),
   getGeminiStatus: () => request('/gemini/status'),
+  getNvidiaStatus: () => request('/nvidia/status'),
   getHeyGenStatus: () => request('/heygen/status'),
 
   // HeyGen Catalogs
@@ -66,6 +67,18 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
+  improveWithNvidia: (data) =>
+    request('/content/improve-with-nvidia', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  getPlatformVariants: (data) =>
+    request('/content/platform-variants', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
   // Projects & Scripts
   listProjects: () => request('/projects'),
   getProject: (projectId) => request(`/projects/${projectId}`),
@@ -83,6 +96,58 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
+
+  // Publishing Schedule & Automation
+  getSchedule: () => request('/schedule'),
+  createScheduledPost: (data) =>
+    request('/schedule', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateScheduledPost: (id, data) =>
+    request(`/schedule/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+  deleteScheduledPost: (id) =>
+    request(`/schedule/${id}`, {
+      method: 'DELETE',
+    }),
+
+  // Topic Backlog & Autopilot Queue
+  getBacklog: () => request('/backlog'),
+  createBacklogTopic: (data) =>
+    request('/backlog', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  deleteBacklogTopic: (id) =>
+    request(`/backlog/${id}`, {
+      method: 'DELETE',
+    }),
+
+  // Creator Preferences & Posting Cadence
+  getPreferences: () => request('/preferences'),
+  updatePreferences: (data) =>
+    request('/preferences', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  // Autopilot Engine & Safety Simulation
+  planAutopilot: (daysAhead = 7) =>
+    request(`/autopilot/plan?days_ahead=${daysAhead}`, {
+      method: 'POST',
+    }),
+  simulatePublish: (postId, requireApproval = true) =>
+    request(`/autopilot/simulate-publish/${postId}?require_approval=${requireApproval}`, {
+      method: 'POST',
+    }),
+  checkMissedSlots: () =>
+    request('/autopilot/check-missed', {
+      method: 'POST',
+    }),
+  getAutopilotStatus: () => request('/autopilot/status'),
 
   // HeyGen Video Generation & Monitoring
   generateVideo: (data) =>

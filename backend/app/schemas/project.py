@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SceneItem(BaseModel):
@@ -85,8 +85,7 @@ class VideoJobResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectSummary(BaseModel):
@@ -103,8 +102,7 @@ class ProjectSummary(BaseModel):
     thumbnail_url: Optional[str] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectDetailResponse(BaseModel):
@@ -127,8 +125,7 @@ class ProjectDetailResponse(BaseModel):
     latest_script: Optional[GeneratedContentSchema] = None
     latest_video_job: Optional[VideoJobResponse] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AIStatusResponse(BaseModel):
@@ -148,3 +145,100 @@ class HeyGenStatusResponse(BaseModel):
     remaining_credits: Optional[float] = None
     plan: Optional[str] = None
     message: str
+
+
+class SceneSchema(SceneItem):
+    pass
+
+
+class NvidiaImproveRequest(BaseModel):
+    project_id: int
+    instructions: Optional[str] = Field(
+        None,
+        description="Refinement directive for NVIDIA NIM cloud LLM",
+    )
+    model_name: Optional[str] = Field(None, description="Optional override of NVIDIA model")
+
+
+class PlatformVariantsRequest(BaseModel):
+    project_id: int
+    provider: Optional[str] = Field("nvidia", description="'nvidia' or 'gemma'")
+
+
+class ScheduledPostCreate(BaseModel):
+    project_id: Optional[int] = None
+    platform: str = Field("YouTube", description="YouTube, Instagram Reels, YouTube Shorts, LinkedIn")
+    title: str
+    script: Optional[str] = None
+    video_url: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    scheduled_datetime: datetime
+    status: Optional[str] = "SCHEDULED"
+
+
+class ScheduledPostUpdate(BaseModel):
+    scheduled_datetime: Optional[datetime] = None
+    status: Optional[str] = None
+    published_url: Optional[str] = None
+    error_message: Optional[str] = None
+
+
+class ScheduledPostResponse(BaseModel):
+    id: int
+    project_id: Optional[int] = None
+    platform: str
+    title: str
+    script: Optional[str] = None
+    video_url: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    scheduled_datetime: datetime
+    status: str
+    published_url: Optional[str] = None
+    error_message: Optional[str] = None
+    retry_count: int = 0
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TopicBacklogCreate(BaseModel):
+    topic: str
+    target_audience: Optional[str] = "College Students"
+    language: Optional[str] = "Hindi"
+    preferred_platform: Optional[str] = "YouTube"
+
+
+class TopicBacklogResponse(BaseModel):
+    id: int
+    topic: str
+    target_audience: str
+    language: str
+    preferred_platform: str
+    status: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CreatorPreferenceUpdate(BaseModel):
+    posting_days: Optional[str] = "Monday,Wednesday,Friday"
+    posting_time: Optional[str] = "18:00"
+    timezone: Optional[str] = "Asia/Kolkata"
+    unavailable_dates: Optional[List[str]] = None
+    mode: Optional[str] = "smart_approval"  # manual, smart_approval, autopilot
+    spending_limit_credits: Optional[int] = 5
+
+
+class CreatorPreferenceResponse(BaseModel):
+    id: int
+    posting_days: str
+    posting_time: str
+    timezone: str
+    unavailable_dates: List[str] = []
+    mode: str
+    spending_limit_credits: int
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+

@@ -7,16 +7,25 @@ from dotenv import load_dotenv
 # Load .env from backend directory or project root if present
 backend_dir = Path(__file__).resolve().parent.parent.parent
 env_file = backend_dir / ".env"
+parent_env = backend_dir.parent / "backend" / ".env"
+
 if env_file.exists():
     load_dotenv(env_file)
-else:
+if parent_env.exists():
+    load_dotenv(parent_env, override=False)
+if not env_file.exists() and not parent_env.exists():
     load_dotenv()
 
 # HeyGen V3 Configuration
 HEYGEN_API_KEY = os.environ.get("HEYGEN_API_KEY", "").strip()
 HEYGEN_BASE_URL = os.environ.get("HEYGEN_BASE_URL", "https://api.heygen.com").rstrip("/")
 
-# Gemini API Configuration
+# NVIDIA NIM Cloud API Configuration
+NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "").strip()
+NVIDIA_BASE_URL = os.environ.get("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
+NVIDIA_MODEL = os.environ.get("NVIDIA_MODEL", "meta/llama-3.3-70b-instruct").strip()
+
+# Gemini API Configuration (Preserve separate provider)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip()
 
@@ -27,8 +36,10 @@ SENTRY_DSN = os.environ.get("SENTRY_DSN", "").strip()
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma4:e2b-it-qat").strip()
 
-# Database Configuration
+# Database Configuration (Supports SQLite local dev & Supabase/PostgreSQL production)
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./creatorflow.db")
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # Server Configuration
 PORT = int(os.environ.get("PORT", 8000))

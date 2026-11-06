@@ -42,6 +42,12 @@ export default function ScriptEditorPage() {
   const [geminiLoading, setGeminiLoading] = useState(false);
   const [geminiDiff, setGeminiDiff] = useState(null);
 
+  // Platform Variants Modal state
+  const [variantsModalOpen, setVariantsModalOpen] = useState(false);
+  const [variantsLoading, setVariantsLoading] = useState(false);
+  const [variantsData, setVariantsData] = useState(null);
+  const [activeVariantTab, setActiveVariantTab] = useState('youtube_long');
+
   // Sync state with currentProject
   useEffect(() => {
     if (currentProject && currentProject.latest_script) {
@@ -54,6 +60,9 @@ export default function ScriptEditorPage() {
       setHashtags(s.hashtags || []);
       setCallToAction(s.call_to_action || '');
       setIsApproved(s.is_approved || false);
+      if (currentProject.platform_variants) {
+        setVariantsData(currentProject.platform_variants);
+      }
     }
   }, [currentProject]);
 
@@ -170,6 +179,34 @@ export default function ScriptEditorPage() {
     addToast('Applied Gemini script improvements!', 'success');
   };
 
+  // Platform Variants Flow
+  const handleGenerateVariants = async () => {
+    if (!currentProject) return;
+    setVariantsLoading(true);
+    try {
+      const res = await api.getPlatformVariants({
+        project_id: currentProject.id,
+      });
+      setVariantsData(res.variants);
+      addToast(`Generated 4 platform adaptations via ${res.provider}!`, 'success');
+    } catch (err) {
+      addToast(`Variant generation failed: ${err.message}`, 'error');
+    } finally {
+      setVariantsLoading(false);
+    }
+  };
+
+  const handleApplyVariant = (variantKey) => {
+    if (!variantsData || !variantsData[variantKey]) return;
+    const v = variantsData[variantKey];
+    if (v.hook) setHook(v.hook);
+    if (v.narration) setScript(v.narration);
+    if (v.call_to_action) setCallToAction(v.call_to_action);
+
+    setVariantsModalOpen(false);
+    addToast(`Applied ${v.format_name} adaptation!`, 'success');
+  };
+
   if (!currentProject) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
@@ -222,6 +259,19 @@ export default function ScriptEditorPage() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
+          {/* Platform Variants Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setVariantsModalOpen(true);
+              if (!variantsData) handleGenerateVariants();
+            }}
+            className="px-4 py-2.5 nm-button text-xs font-bold text-indigo-700 hover:text-indigo-800 flex items-center gap-2 rounded-xl cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-indigo-500" />
+            <span>4-Way Social Formats</span>
+          </button>
+
           {/* Gemini Polish Trigger */}
           <button
             type="button"
@@ -577,6 +627,143 @@ export default function ScriptEditorPage() {
                     Accept & Apply Enhancements
                   </button>
                 </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Multi-Platform Variants Modal */}
+      {variantsModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="nm-card max-w-3xl w-full p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl nm-card-sm flex items-center justify-center text-indigo-600">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-slate-800 text-sm">
+                    4-Way Native Social Adaptations
+                  </h3>
+                  <p className="text-[10px] text-slate-400">
+                    Platform-tailored duration, hook psychology, and pacing for maximum retention.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setVariantsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-700 text-lg font-bold p-1 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {variantsLoading ? (
+              <div className="py-16 text-center space-y-3">
+                <div className="w-8 h-8 border-3 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin mx-auto" />
+                <p className="text-xs font-bold text-slate-700">Adapting concept into 4 native formats...</p>
+                <p className="text-[10px] text-slate-400">Analyzing platform mechanics and audience attention spans</p>
+              </div>
+            ) : variantsData ? (
+              <div className="space-y-6">
+                {/* Format Tabs */}
+                <div className="flex flex-wrap gap-2 p-1.5 nm-inset rounded-2xl bg-white/40">
+                  {[
+                    { key: 'youtube_long', label: 'YouTube (16:9)', duration: '60-90s' },
+                    { key: 'instagram_reel', label: 'IG Reels (9:16)', duration: '30s' },
+                    { key: 'youtube_shorts', label: 'Shorts (9:16)', duration: '20s' },
+                    { key: 'linkedin_post', label: 'LinkedIn (1:1)', duration: '45s' },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setActiveVariantTab(tab.key)}
+                      className={`flex-1 min-w-[130px] px-3 py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
+                        activeVariantTab === tab.key
+                          ? 'nm-card bg-indigo-600 text-white shadow-md'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                      <span className={`text-[10px] font-normal ${activeVariantTab === tab.key ? 'text-indigo-200' : 'text-slate-400'}`}>
+                        {tab.duration}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Active Variant Content Card */}
+                {variantsData[activeVariantTab] && (
+                  <div className="nm-card-sm p-5 rounded-2xl space-y-4 bg-white/50 border border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold text-indigo-700 uppercase tracking-wide">
+                        {variantsData[activeVariantTab].format_name}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        Target Duration: {variantsData[activeVariantTab].target_duration}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Hook (First 3 Seconds)
+                      </label>
+                      <p className="text-xs font-semibold text-slate-800 p-2.5 rounded-xl nm-inset bg-white/60">
+                        {variantsData[activeVariantTab].hook}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Full Spoken Narration
+                      </label>
+                      <div className="text-xs text-slate-700 p-3 rounded-xl nm-inset bg-white/60 font-mono whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
+                        {variantsData[activeVariantTab].narration}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Platform Call-to-Action
+                      </label>
+                      <p className="text-xs font-semibold text-indigo-900 p-2 rounded-xl bg-indigo-50/60 border border-indigo-100">
+                        {variantsData[activeVariantTab].call_to_action}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Modal Footer */}
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    type="button"
+                    onClick={handleGenerateVariants}
+                    disabled={variantsLoading}
+                    className="px-4 py-2 nm-button text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
+                  >
+                    Re-generate Adaptations
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleApplyVariant(activeVariantTab)}
+                    className="px-6 py-2.5 nm-button-primary text-xs font-bold flex items-center gap-2 rounded-xl cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Apply This Format to Editor</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="py-12 text-center space-y-4">
+                <p className="text-xs text-slate-600">No adaptations generated yet for this project.</p>
+                <button
+                  onClick={handleGenerateVariants}
+                  className="px-6 py-2.5 nm-button-primary text-xs font-bold rounded-xl cursor-pointer"
+                >
+                  Generate 4-Way Adaptations Now
+                </button>
               </div>
             )}
           </div>
